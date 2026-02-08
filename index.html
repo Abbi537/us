@@ -223,8 +223,16 @@ function explode(x,y){
 yesBtn.addEventListener("click", ()=>{
     celebrate.style.display = "block";
     launchFireworks();
+
+    const music = document.getElementById("bgMusic");
+    if(music){
+        music.volume = 0.5;   // optional
+        music.play().catch(()=>{});
+    }
 });
+
 </script>
+<audio id="bgMusic" src="123.mp3" preload="auto"></audio>
 
 </body>
 </html>

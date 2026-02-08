@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Be My Valentine ❤️</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    height:100vh;
+    overflow:hidden;
+    font-family:Poppins, sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background: radial-gradient(circle at top left,#ff9a9e,#ff4d6d);
+}
+
+/* hearts */
+.heart{
+    position:absolute;
+    bottom:-20px;
+    font-size:20px;
+    animation: floatUp linear infinite;
+    opacity:.7;
+}
+@keyframes floatUp{
+    to{
+        transform: translateY(-110vh);
+        opacity:0;
+    }
+}
+
+.card{
+    background:white;
+    padding:40px 50px;
+    border-radius:25px;
+    box-shadow:0 15px 40px rgba(0,0,0,.25);
+    text-align:center;
+    max-width:90%;
+    position:relative;
+    z-index:5;
+}
+
+h1{
+    color:#ff4d6d;
+    min-height:60px;
+}
+
+.buttons{
+    margin-top:25px;
+    position:relative;
+}
+
+button{
+    padding:12px 25px;
+    font-size:18px;
+    border:none;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.25s;
+}
+
+#yesBtn{
+    background:#ff4d6d;
+    color:white;
+    box-shadow:0 5px 15px rgba(255,77,109,.5);
+}
+#yesBtn:hover{ transform:scale(1.1); }
+
+#noBtn{
+    background:#eee;
+}
+
+#celebrate{
+    margin-top:20px;
+    font-size:24px;
+    color:#ff4d6d;
+    display:none;
+    font-weight:bold;
+}
+
+canvas{
+    position:fixed;
+    top:0;
+    left:0;
+    pointer-events:none;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="fireworks"></canvas>
+
+<div class="card">
+    <h1 id="typewriter"></h1>
+
+    <div class="buttons">
+        <button id="yesBtn">Yes 💖</button>
+        <button id="noBtn">No 😢</button>
+    </div>
+
+    <div id="celebrate">I knew you'd say YES!! 🥰💘</div>
+</div>
+
+<script>
+// ===== TYPEWRITER =====
+const text = "Will you be my Valentine? ❤️";
+let index = 0;
+const typeEl = document.getElementById("typewriter");
+
+function type(){
+    if(index < text.length){
+        typeEl.innerHTML += text.charAt(index);
+        index++;
+        setTimeout(type, 60);
+    }
+}
+type();
+
+
+// ===== HEARTS =====
+function createHeart(){
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.style.left = Math.random()*100 + "vw";
+    heart.style.animationDuration = (3 + Math.random()*3) + "s";
+    heart.innerHTML = "💖";
+    document.body.appendChild(heart);
+    setTimeout(()=> heart.remove(),6000);
+}
+setInterval(createHeart,300);
+
+
+// ===== NO BUTTON =====
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const card = document.querySelector(".card");
+
+let msgs = [
+"Are you sure? 🥺",
+"Think again 😭",
+"Please? 💕",
+"I'll get you chocolate 🍫",
+"Don't do this to me 💔",
+"Meri pyari ni hain :("
+];
+let m = 0;
+
+function moveNo(){
+    const cardRect = card.getBoundingClientRect();
+    const btnRect = noBtn.getBoundingClientRect();
+
+    const maxX = cardRect.width - btnRect.width;
+    const maxY = cardRect.height - btnRect.height;
+
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+
+    noBtn.style.position = "absolute";
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+}
+
+noBtn.addEventListener("click", ()=>{
+    moveNo();
+    if(m < msgs.length){
+        noBtn.innerText = msgs[m];
+        m++;
+    }
+});
+
+
+// ===== FIREWORKS =====
+const celebrate = document.getElementById("celebrate");
+const canvas = document.getElementById("fireworks");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+function launchFireworks(){
+    for(let i=0;i<80;i++){
+        setTimeout(()=>{
+            const x = Math.random()*canvas.width;
+            const y = Math.random()*canvas.height/2;
+            explode(x,y);
+        }, i*40);
+    }
+}
+
+function explode(x,y){
+    for(let i=0;i<20;i++){
+        const angle = Math.random()*Math.PI*2;
+        const speed = Math.random()*3+2;
+        const dx = Math.cos(angle)*speed;
+        const dy = Math.sin(angle)*speed;
+
+        let px = x;
+        let py = y;
+
+        const interval = setInterval(()=>{
+            ctx.fillStyle = `hsl(${Math.random()*360},100%,60%)`;
+            ctx.fillRect(px,py,3,3);
+            px += dx;
+            py += dy;
+        },20);
+
+        setTimeout(()=> clearInterval(interval),500);
+    }
+}
+
+
+// ===== YES =====
+yesBtn.addEventListener("click", ()=>{
+    celebrate.style.display = "block";
+    launchFireworks();
+});
+</script>
+
+</body>
+</html>
